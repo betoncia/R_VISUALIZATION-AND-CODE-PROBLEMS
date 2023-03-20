@@ -1,0 +1,88 @@
+---
+title: "Scientific Programming exam"
+author: "Bet Bardají Bofill"
+date: "2022-12-02"
+output:
+  word_document: default
+  html_document: default
+  pdf_document: default
+---
+My Rstudio collapsed so some of  the answers in the test are wrong because I had no time so I click without looking. I'm sorry.
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(MPsychoR)
+library(ggplot2)
+library(tidyverse)
+```
+
+## R Markdown
+
+```{r cars}
+ds <- as.data.frame(BrainIQ)
+```
+
+## Plots
+
+
+```{r pressure}
+summary(ds)
+ggplot(ds, aes(x=Weight, y=VIQ)) + geom_point() +geom_smooth()
+```
+
+```{r pressure}
+ggplot(ds, aes(x=Height, y=Weight)) + geom_point() +geom_smooth()
+```
+Verbal IQ VS PIQ
+```{r pressure}
+ggplot(ds, aes(x=VIQ, y=PIQ)) + geom_point() +geom_smooth()
+```
+```{r pressure}
+ggplot(ds, aes(x=Gender, y=PIQ)) + geom_point()
+```
+Gender VS MRI_COUNT
+```{r pressure}
+ggplot(ds, aes(x=Gender, y=MRI_Count)) + geom_point()
+```
+FULL_SCALE_IQ
+```{r pressure}
+full_iq <- ds %>%
+  filter(FSIQ > 103) %>%
+  filter(Gender == "Female")
+full_iq
+mean(full_iq$PIQ)
+```
+
+BOX_PLOT_IQ
+```{r pressure}
+boxiq <- ds %>%
+  mutate(iq_rating = case_when(FSIQ > 103 ~ "high",
+                               FSIQ <= 103 ~ "low"
+                               ))
+ggplot(boxiq, aes(x=iq_rating, y=PIQ)) + geom_boxplot()
+```
+
+PLOTS COMPAR
+```{r pressure}
+ggplot(ds, aes(x=VIQ, y=PIQ, color=Gender, size=MRI_Count)) + geom_point()
+ggplot(ds, aes(x=MRI_Count, color= Gender)) + geom_density()
+```
+
+```{r }
+mdl <- lm(PIQ ~ Weight + Height + MRI_Count, data=ds)
+summary(mdl)
+```
+RE : RESIDUAL ERROR 
+```{r error}
+mdl <- lm(PIQ ~ MRI_Count, data=ds)
+summary(mdl)
+```
+
+```{r pressure}
+new_variable <- ds %>%
+  mutate(nv = MRI_Count / Height)
+new_variable
+mdl <- lm(PIQ ~ nv, data=new_variable)
+summary(mdl)
+```
+
+Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
